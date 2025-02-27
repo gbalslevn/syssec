@@ -10,7 +10,7 @@ It is maintained by Thomas Jensen, Mathias Damsgaard Krogh and Gustav Balsev Nie
 3. Install the required packages `python3 -m pip install -r requirements.txt` (use `py` instead of `python3` on windows) 
 4. Run a file with `python3 example_file.py`
 
-Text Mathias if this does not work.
+Text Mathias if this does not work. Good luck. 
 
 # Updating dependencies
 Do `python3 -m pip freeze > requirements.txt`
