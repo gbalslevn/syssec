@@ -1,0 +1,4 @@
+crypto-utils==1.0.0
+pycrypto==2.6.1
+pycryptodome==3.21.0
+requests==2.32.3
