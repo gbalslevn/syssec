@@ -52,8 +52,7 @@ def S(m, d, N):
         maskedDB = bytes([maskedDB[0] & mask]) + maskedDB[1:]
         
     EM = maskedDB + H + b'\xbc'
-    s = pow(int.from_bytes(EM, 'big'), d, N)
-    
+    s = pow(int.from_bytes(EM, byteorder='big'), d, N)
     return s
          
 def V(m, s, e, N):
@@ -61,8 +60,8 @@ def V(m, s, e, N):
     hLen = len(mHash)
     emLen = (sizeN + 7) // 8
     EM = pow(s, e, N)
-    EM = EM.to_bytes(emLen, 'big')
-    
+    EM = EM.to_bytes(emLen,byteorder='big')
+    print(EM)
     if EM[-1] != 0xbc:
         print(f"Error: Rightmost byte must be 0xbc and not {EM[-1]}.")
         return False  

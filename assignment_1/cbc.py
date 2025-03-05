@@ -16,7 +16,7 @@ def oracle(iv, block):
     return True 
 
 def singleBlockDecryption(ct_block, iv): 
-    forged_iv = list(iv)  # Init the forged with the IV used to encrypt this ct_block
+    forged_iv = list(iv)
     decrypted_bytes = [0] * BLOCK_SIZE # Keep track of all decrypted bytes in this block
     
     for pad_val in range(1, BLOCK_SIZE + 1): # pad_val is 0x01, 0x02, ..., 0x16
@@ -27,38 +27,40 @@ def singleBlockDecryption(ct_block, iv):
                 decrypted_byte = candidate ^ pad_val # d = g xor pad_val
                 decrypted_bytes[-pad_val] = decrypted_byte  
                 
-                # Prepare the IV for the next byte
+                # Increment padding to move to next next byte in IV and maintain valid padding. eg. 1 x 0x01 -> 2 x 0x02 padding
                 for j in range(1, pad_val + 1):
                     forged_iv[-j] = decrypted_bytes[-j] ^ (pad_val + 1)
                 break  
             print(f'Decrypted bytes is: {decrypted_bytes}. Forged_iv is: {forged_iv}')
     return decrypted_bytes
 
-def encrypt(plaintext, final_ct_block):    
+def encrypt(plaintext, lastCtBlock):    
     padding_length = BLOCK_SIZE - (len(plaintext) % BLOCK_SIZE)
     plaintext += bytes([padding_length] * padding_length)
     print(f'Padding length is: {padding_length}')
     print([padding_length] * padding_length)
+    
     numberOfBlocks = int(len(plaintext) / BLOCK_SIZE)
     blocks = [plaintext[BLOCK_SIZE * i:(i+1) * BLOCK_SIZE] for i in range(numberOfBlocks)]
 
-    ciphertext = final_ct_block  # Start with a known final ciphertext block
+    ciphertext = lastCtBlock  # Start with a valid ciphertext block
     
     for pt_block in reversed(blocks):
         iv = os.urandom(BLOCK_SIZE)
-        encrypted_bytes = singleBlockDecryption(final_ct_block, iv)
+        encrypted_bytes = singleBlockDecryption(lastCtBlock, iv)
         
-        forged_iv = bytes([p ^ enc_byte for p, enc_byte in zip(pt_block, encrypted_bytes)]) # The ciphertext
-        ciphertext = forged_iv + ciphertext  # Prepend the block
+        ciphertext_block = bytes([p ^ enc_byte for p, enc_byte in zip(pt_block, encrypted_bytes)]) 
+        ciphertext = ciphertext_block + ciphertext
         print(f'Ciphertext is: {ciphertext}')
-        final_ct_block = forged_iv  # Move to the next block
+        lastCtBlock = ciphertext_block 
     
     return ciphertext
 
 def decrypt(ct, iv):
     numberOfBlocks = int(len(ct) / BLOCK_SIZE)
-    blocks = [ct[BLOCK_SIZE * i: (i + 1) * BLOCK_SIZE] for i in range(numberOfBlocks)] # Put all blocks in a list
+    blocks = [ct[BLOCK_SIZE * i: (i + 1) * BLOCK_SIZE] for i in range(numberOfBlocks)]
     plaintext = b""
+    
     for ct_block in blocks: 
         decrypted_bytes = singleBlockDecryption(ct_block, iv)
         plaintext += bytes([iv_byte ^ dec_byte for iv_byte, dec_byte in zip(iv, decrypted_bytes)]) # pt = IV XOR DT
