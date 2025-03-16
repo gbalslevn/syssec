@@ -36,13 +36,9 @@ def create_packet(enc_message):
 # Wraps the message inside the payload of a ICMP-packet and sends it to the server
 def send_icmp(data):
     dest_ip = "127.0.0.1"
-    print(f'"length of message: " {len(data)}')
     packet = create_packet(data)
-    print(f'"length of packet: "{len(packet)}')
     sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.getprotobyname("icmp"))
-    print(f"Packet created: {packet}")
     sent = sock.sendto(packet, (dest_ip, 1))
-    print(f"Packet sent to {dest_ip}, bytes sent: {sent}")
 
 def main():
     message = input("Enter your message: ")
