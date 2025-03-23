@@ -29,15 +29,15 @@ def throttleTCP(sourceIP, destIp, throttle):
 sourceIp = "localhost"
 destIp = "localhost"
 
-sport = random.randint(1024, 65535)
+# sport = random.randint(1024, 65535)
 # SYN
-ip = IP(src="192.168.0.197", dst=destIp)
-SYN = TCP(sport=sport, dport=443, flags='S', seq=1000)
-SYNACK = sr1(ip/SYN)
+# ip = IP(src="192.168.0.197", dst=destIp)
+# SYN = TCP(sport=sport, dport=443, flags='S', seq=1000)
+# SYNACK = sr1(ip/SYN)
 
-# SYN-ACK
-ACK = TCP(sport=sport, dport=443, flags='A', seq=SYNACK.ack + 1, ack=SYNACK.seq + 1)
-send(ip/ACK)
+# # SYN-ACK
+# ACK = TCP(sport=sport, dport=443, flags='A', seq=SYNACK.ack + 1, ack=SYNACK.seq + 1)
+# send(ip/ACK)
 
 
 def retransmit_ack(packet):
@@ -48,10 +48,10 @@ def retransmit_ack(packet):
         new_packet = packet.copy()
 
         # Send the modified or original ACK packet
-        sendp(new_packet, iface="eth0")  # Use appropriate network interface
+        sendp(new_packet, iface="en0", count=3, inter=0.5)  
 
         print("Retransmitted ACK Packet.")
 
-capture = sniff(count=1, prn=process_packet)
-print(capture.summary())
-# sniff(prn=retransmit_ack, iface="eth0", count=1) 
+# capture = sniff(count=1)
+# print(capture.summary())
+sniff(prn=retransmit_ack, iface="en0", count=1) 
