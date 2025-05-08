@@ -1,5 +1,6 @@
 import requests
 import os
+import time
 
 # CBC Padding Oracle (Task 1)
 
@@ -8,7 +9,7 @@ BLOCK_SIZE = 16
 def oracle(iv, block):
     new_ciphertext = bytes(iv) + block
     print(new_ciphertext.hex())
-    res = requests.get(f'https://cbc.syssec.dk/quote/', cookies={'authtoken': new_ciphertext.hex()})
+    res = requests.get(f'http://127.0.0.1:5000/quote/', cookies={'authtoken': new_ciphertext.hex()})
     print(res.text)
     
     if "incorrect" in res.text:
@@ -20,6 +21,7 @@ def singleBlockDecryption(ct_block, iv):
     decrypted_bytes = [0] * BLOCK_SIZE # Keep track of all decrypted bytes in this block
     
     for pad_val in range(1, BLOCK_SIZE + 1): # pad_val is 0x01, 0x02, ..., 0x16
+        time.sleep(1)
         for candidate in range(256):
             forged_iv[-pad_val] = candidate  
         
@@ -70,10 +72,10 @@ def decrypt(ct, iv):
     print(f'Recovered plaintext: {plaintext}')
     return plaintext
 
-ciphertext = bytes.fromhex('3436a595f70aa12d505d00a073e2c9ab5243d19ea4f4a8a6b6a716505a5e4b7244090d7d32e0c9d631393ec745866d1e9cb0f3ce8c7ef22def9f352ff981fbf59ec86d71aaf15ba54b0226a955bd99ab1f71e88af6fc13c461cca5ce2ab51c09') # Cookie from the home page
+ciphertext = bytes.fromhex('73c3963ffdc33803204bbb653189015361c23fa8212bc5a1e237f3da68561b0500cef030f1855bc66743fc3375bdab0d99e051320de10c3edb20264d39166cc2') # Cookie from the home page
 iv, ct = ciphertext[:BLOCK_SIZE], ciphertext[BLOCK_SIZE:]
 print(decrypt(ct, iv))
-plaintext_solution = b'I must use authenticated encryption since ... plain CBC is not secure!'
-lastCtBlock = ct[len(ct)-BLOCK_SIZE:] 
-ciphertext_solution = encrypt(plaintext_solution, lastCtBlock)
-print(ciphertext_solution.hex())
+#plaintext_solution = b'I must use authenticated encryption since ... plain CBC is not secure!'
+#lastCtBlock = ct[len(ct)-BLOCK_SIZE:] 
+#ciphertext_solution = encrypt(plaintext_solution, lastCtBlock)
+#print(ciphertext_solution.hex())

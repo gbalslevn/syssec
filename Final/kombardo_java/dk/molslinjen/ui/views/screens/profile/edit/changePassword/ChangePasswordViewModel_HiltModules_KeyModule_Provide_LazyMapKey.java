@@ -1,0 +1,6 @@
+package dk.molslinjen.ui.views.screens.profile.edit.changePassword;
+
+/* loaded from: classes2.dex */
+public abstract class ChangePasswordViewModel_HiltModules_KeyModule_Provide_LazyMapKey {
+    public static String lazyClassKeyName = "dk.molslinjen.ui.views.screens.profile.edit.changePassword.ChangePasswordViewModel";
+}

@@ -1,0 +1,33 @@
+package dk.molslinjen.domain.localstorage.vehicle;
+
+import dk.molslinjen.domain.model.account.UserVehicle;
+import kotlin.Metadata;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.jvm.internal.ContinuationImpl;
+import kotlin.coroutines.jvm.internal.DebugMetadata;
+
+/* JADX INFO: Access modifiers changed from: package-private */
+@Metadata(k = 3, mv = {2, 1, 0}, xi = 48)
+@DebugMetadata(c = "dk.molslinjen.domain.localstorage.vehicle.VehicleRepository", f = "VehicleRepository.kt", l = {32, 32}, m = "save")
+/* loaded from: classes2.dex */
+public final class VehicleRepository$save$1 extends ContinuationImpl {
+    Object L$0;
+    Object L$1;
+    int label;
+    /* synthetic */ Object result;
+    final /* synthetic */ VehicleRepository this$0;
+
+    /* JADX INFO: Access modifiers changed from: package-private */
+    /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+    public VehicleRepository$save$1(VehicleRepository vehicleRepository, Continuation<? super VehicleRepository$save$1> continuation) {
+        super(continuation);
+        this.this$0 = vehicleRepository;
+    }
+
+    @Override // kotlin.coroutines.jvm.internal.BaseContinuationImpl
+    public final Object invokeSuspend(Object obj) {
+        this.result = obj;
+        this.label |= Integer.MIN_VALUE;
+        return this.this$0.save((UserVehicle) null, this);
+    }
+}

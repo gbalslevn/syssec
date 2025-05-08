@@ -1,0 +1,6 @@
+package dk.molslinjen.ui.views.screens.booking.ticketType;
+
+/* loaded from: classes2.dex */
+public abstract class TicketTypeMolslinjenViewModel_HiltModules_KeyModule_Provide_LazyMapKey {
+    public static String lazyClassKeyName = "dk.molslinjen.ui.views.screens.booking.ticketType.TicketTypeMolslinjenViewModel";
+}

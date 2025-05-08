@@ -1,0 +1,40 @@
+package dk.molslinjen.domain.managers.checkout;
+
+import kotlin.Metadata;
+import kotlin.coroutines.Continuation;
+import kotlin.coroutines.jvm.internal.ContinuationImpl;
+import kotlin.coroutines.jvm.internal.DebugMetadata;
+
+/* JADX INFO: Access modifiers changed from: package-private */
+@Metadata(k = 3, mv = {2, 1, 0}, xi = 48)
+@DebugMetadata(c = "dk.molslinjen.domain.managers.checkout.PassengerSelectionHelper", f = "PassengerSelectionHelper.kt", l = {84}, m = "loadPassengerState")
+/* loaded from: classes2.dex */
+public final class PassengerSelectionHelper$loadPassengerState$1 extends ContinuationImpl {
+    Object L$0;
+    Object L$1;
+    Object L$2;
+    Object L$3;
+    Object L$4;
+    Object L$5;
+    Object L$6;
+    boolean Z$0;
+    boolean Z$1;
+    boolean Z$2;
+    int label;
+    /* synthetic */ Object result;
+    final /* synthetic */ PassengerSelectionHelper this$0;
+
+    /* JADX INFO: Access modifiers changed from: package-private */
+    /* JADX WARN: 'super' call moved to the top of the method (can break code semantics) */
+    public PassengerSelectionHelper$loadPassengerState$1(PassengerSelectionHelper passengerSelectionHelper, Continuation<? super PassengerSelectionHelper$loadPassengerState$1> continuation) {
+        super(continuation);
+        this.this$0 = passengerSelectionHelper;
+    }
+
+    @Override // kotlin.coroutines.jvm.internal.BaseContinuationImpl
+    public final Object invokeSuspend(Object obj) {
+        this.result = obj;
+        this.label |= Integer.MIN_VALUE;
+        return this.this$0.loadPassengerState(null, false, null, false, null, null, false, null, null, null, this);
+    }
+}
